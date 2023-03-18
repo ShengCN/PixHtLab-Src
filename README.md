@@ -20,7 +20,7 @@ This is the source code([[**Paper**](https://arxiv.org/pdf/2303.00137.pdf)]  [[*
 <!-- # <a name="training"></a> Training -->
 
 # Updates
-- [x] Basic setup. 
+- [x] [2023-03-16] Basic setup. 
 - [ ] Inference code ready. 
 - [ ] Dataset code ready. 
 - [ ] Training code ready. 
