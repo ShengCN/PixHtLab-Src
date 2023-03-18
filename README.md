@@ -2,13 +2,13 @@
 This is the source code([[**Paper**](https://arxiv.org/pdf/2303.00137.pdf)]  [[**Demo**](#inference)]  [[**Training**](#training)]) repository for two papers:  
 
 
-* [(CVPR 2023)PixHt-Lab: Pixel Height Based Light Effect Generation for Image Compositing](https://arxiv.org/pdf/2303.00137.pdf)
+* [(CVPR 2023) PixHt-Lab: Pixel Height Based Light Effect Generation for Image Compositing](https://arxiv.org/pdf/2303.00137.pdf)
 
 <p align="center">
   <img src="Figs/more_results2.png" />
 </p>
-
-* [(ECCV 2022)Controllable Shadow Generation Using Pixel Height Maps](https://arxiv.org/pdf/2207.05385.pdf)
+ 
+* [(ECCV 2022) Controllable Shadow Generation Using Pixel Height Maps](https://arxiv.org/pdf/2207.05385.pdf)
 
 <p align="center">
   <img src="Figs/SSG.gif" />
