@@ -31,11 +31,5 @@ This code repo can only be used for non-commercial use only. It is protected by 
 
 # Citation
 ```
-@inproceedings{sheng2021ssn,
-  title={SSN: Soft shadow network for image compositing},
-  author={Sheng, Yichen and Zhang, Jianming and Benes, Bedrich},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  pages={4380--4390},
-  year={2021}
-}
+Coming soon...
 ```
