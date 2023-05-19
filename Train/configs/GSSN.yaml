@@ -1,0 +1,57 @@
+exp_name: GSSN_ALL_Channels_2e_5
+
+# model related
+model:
+  name: 'GSSN'
+  # backbone: 'vanilla'
+  backbone: 'SSN_v1'
+  in_channels: 6 
+  out_channels: 1
+  resnet: True
+
+  mid_act: "gelu"
+  out_act: "gelu"
+
+  optimizer: 'Adam'
+  weight_decay: 4e-5
+  beta1: 0.9
+
+  focal: False
+
+# dataset
+dataset:
+  name: 'GSSN_Dataset'
+  hdf5_file: 'Dataset1/more_general_scenes/train/ALL_SIZE_WALL/dataset.hdf5'
+  type: 'BC_Boundary'
+  rech_grad: True
+
+
+test_dataset:
+  name: 'GSSN_Testing_Dataset'
+  hdf5_file: 'Dataset/standalone_test_split/test/ALL_SIZE_MORE/dataset.hdf5'
+  type: 'BC_Boundary'
+  ignore_shading: True
+  rech_grad: True
+
+
+# training related
+hyper_params:
+  lr: 2e-5
+  epochs: 100000
+  workers: 52
+  batch_size: 52
+  save_epoch: 10
+
+  eval_batch: 10
+  eval_save: False
+
+  # visualization
+  vis_iter: 100     # iteration for visualization
+  save_iter: 100
+  n_cols: 5
+  gpus:
+    - 0
+  default_folder: 'weights'
+  resume: False
+  # resume: True
+  weight_file: 'latest'
