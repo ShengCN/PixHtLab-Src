@@ -1,0 +1,21 @@
+bootstrap: docker 
+From: yichensheng/pixht:0.1
+
+Stage: build
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    # apt-get update && apt-get install -y netcat && apt-get install -y ffmpeg 
+    NOW=`date`
+    echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+    echo "export SHELL=/bin/bash" >> $SINGULARITY_ENVIRONMENT
+
+    echo ". /opt/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+
+%environment
+    export SHELL=/bin/bash
+    export PATH="/opt/miniconda/bin:$PATH"
+
+    echo ". /opt/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+	. /opt/miniconda3/etc/profile.d/conda.sh
+    source ~/.bashrc && conda activate pixht 
