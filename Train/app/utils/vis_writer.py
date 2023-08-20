@@ -101,8 +101,9 @@ class vis_writer:
             plt.imsave(opath, v)
 
         if os.path.exists(csv):
-            df = pd.read_csv(csv)
-            df = df.append(new_data, ignore_index=True)
+            df     = pd.read_csv(csv)
+            tmp_df = pd.DataFrame(data=[new_data])
+            df     = pd.concat([df, tmp_df], ignore_index=True)
         else:
             df = pd.DataFrame(data=[new_data])
 

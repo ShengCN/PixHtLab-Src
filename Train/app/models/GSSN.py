@@ -12,7 +12,7 @@ from .blocks import *
 from .SSN import SSN
 from .SSN_v1 import SSN_v1
 from .Loss.Loss import norm_loss
-from .Attention_SSN import Attention_SSN
+
 
 class GSSN(abs_model):
     def __init__(self, opt):
@@ -39,12 +39,6 @@ class GSSN(abs_model):
                                  mid_act=mid_act,
                                  out_act=out_act,
                                  resnet=resnet)
-            elif backbone == 'Attention':
-                self.model = Attention_SSN(in_channels=in_channels,
-                                           out_channels=out_channels,
-                                           mid_act=mid_act,
-                                           out_act=out_act,
-                                           resnet=resnet)
             elif backbone == 'SSN_v1':
                 self.model = SSN_v1(in_channels=in_channels,
                                     out_channels=out_channels,
@@ -83,7 +77,6 @@ class GSSN(abs_model):
         if self.focal:
             total_loss = torch.pow(total_loss, 3)
 
-        total_loss = total_loss / b
         return total_loss
 
 

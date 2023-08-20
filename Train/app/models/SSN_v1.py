@@ -1,115 +1,39 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-import logging
+from torchvision import transforms
+import numpy as np
 
-def weights_init(init_type='gaussian', std=0.02):
-    def init_fun(m):
-        classname = m.__class__.__name__
-        if (classname.find('Conv') == 0 or classname.find(
-                'Linear') == 0) and hasattr(m, 'weight'):
-            if init_type == 'gaussian':
-                nn.init.normal_(m.weight, 0.0, std)
-            elif init_type == 'xavier':
-                nn.init.xavier_normal_(m.weight, gain=math.sqrt(2))
-            elif init_type == 'kaiming':
-                nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in')
-            elif init_type == 'orthogonal':
-                nn.init.orthogonal_(m.weight, gain=math.sqrt(2))
-            elif init_type == 'default':
-                pass
-            else:
-                assert 0, "Unsupported initialization: {}".format(init_type)
-            if hasattr(m, 'bias') and m.bias is not None:
-                nn.init.constant_(m.bias, 0.0)
+def get_activation(activation_func):
+    act_func = {
+            "relu":nn.ReLU(),
+            "sigmoid":nn.Sigmoid(),
+            "prelu":nn.PReLU(num_parameters=1),
+            "leaky_relu": nn.LeakyReLU(negative_slope=0.2, inplace=False),
+            "gelu":nn.GELU()
+            }
 
-    return init_fun
-
-def freeze(module):
-    for param in module.parameters():
-        param.requires_grad = False
-
-def unfreeze(module):
-    for param in module.parameters():
-        param.requires_grad = True
-
-def get_optimizer(opt, model):
-    lr           = float(opt['hyper_params']['lr'])
-    beta1        = float(opt['model']['beta1'])
-    weight_decay = float(opt['model']['weight_decay'])
-    opt_name     = opt['model']['optimizer']
-
-    optim_params = []
-    # weight decay
-    for key, value in model.named_parameters():
-        if not value.requires_grad:
-            continue  # frozen weights
-
-        if key[-4:] == 'bias':
-            optim_params += [{'params': value, 'weight_decay': 0.0}]
-        else:
-            optim_params += [{'params': value,
-                              'weight_decay': weight_decay}]
-
-    if opt_name == 'Adam':
-        return optim.Adam(optim_params,
-                            lr=lr,
-                            betas=(beta1, 0.999),
-                            eps=1e-5)
-    else:
-        err = '{} not implemented yet'.format(opt_name)
-        logging.error(err)
-        raise NotImplementedError(err)
-
-
-def get_activation(activation):
-    if activation is None:
+    if activation_func is None:
         return nn.Identity()
 
-    act_func = {
-        'relu':nn.ReLU(),
-        'sigmoid':nn.Sigmoid(),
-        'tanh':nn.Tanh(),
-        'prelu':nn.PReLU(),
-        'leaky':nn.LeakyReLU(0.2),
-        'gelu':nn.GELU(),
-        }
-    if activation not in act_func.keys():
-        logging.error("activation {} is not implemented yet".format(activation))
-        assert False
+    if activation_func not in act_func.keys():
+        raise ValueError("activation function({}) is not found".format(activation_func))
 
-    return act_func[activation]
-
-def get_norm(out_channels, norm_type='Instance'):
-    norm_set = ['Instance', 'Batch', 'Group']
-    if norm_type not in norm_set:
-        err = "Normalization {} has not been implemented yet"
-        logging.error(err)
-        raise ValueError(err)
-
-    if norm_type == 'Instance':
-        return nn.InstanceNorm2d(out_channels, affine=True)
-
-    if norm_type == 'Batch':
-        return nn.BatchNorm2d(out_channels)
-
-    if norm_type == 'Group':
-        if out_channels >= 32:
-            groups = 32
-        else:
-            groups = 1
-
-        return nn.GroupNorm(groups, out_channels)
-
-    else:
-        raise NotImplementedError('{} has not implemented yet'.format(norm_type))
-
+    activation = act_func[activation_func]
+    return activation
 
 
 def get_layer_info(out_channels, activation_func='relu'):
+    #act_func = {"relu":nn.ReLU(), "sigmoid":nn.Sigmoid(), "prelu":nn.PReLU(num_parameters=out_channels)}
+
+    # norm_layer = nn.BatchNorm2d(out_channels, momentum=0.9)
+    if out_channels >= 32:
+        groups = 32
+    else:
+        groups = 1
+
+    norm_layer = nn.GroupNorm(groups, out_channels)
     activation = get_activation(activation_func)
-    norm_layer = get_norm(out_channels, 'Group')
     return norm_layer, activation
 
 
@@ -123,37 +47,83 @@ class Conv(nn.Module):
                  padding=1,
                  bias=True,
                  activation='leaky',
+                 style=False,
                  resnet=True):
         super().__init__()
 
-        norm_layer, act_func = get_layer_info(out_channels,activation)
+        self.style = style
+        norm_layer, act_func = get_layer_info(in_channels, activation)
 
         if resnet and in_channels == out_channels:
             self.resnet = True
         else:
             self.resnet = False
 
-        self.conv = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, stride=stride, kernel_size=kernel_size, padding=padding, bias=bias),
-            norm_layer,
-            act_func)
+        if style:
+            self.styleconv = Conv2DMod(in_channels, out_channels, kernel_size)
+            self.relu = nn.LeakyReLU(0.2, inplace=True)
+        else:
+            self.norm = norm_layer
+            self.conv = nn.Conv2d(in_channels, out_channels, stride=stride, kernel_size=kernel_size, padding=padding, bias=bias)
+            self.act  = act_func
 
-    def forward(self, x):
-        res = self.conv(x)
-
-        if self.resnet:
-            res = res + x
+    def forward(self, x, style_fea=None):
+        if self.style:
+            res = self.styleconv(x, style_fea)
+            res = self.relu(res)
+        else:
+            h = self.conv(self.act(self.norm(x)))
+            if self.resnet:
+                res = h + x
+            else:
+                res = h
 
         return res
 
+
+class Conv2DMod(nn.Module):
+    def __init__(self, in_chan, out_chan, kernel, demod=True, stride=1, dilation=1, eps=1e-8, **kwargs):
+        super().__init__()
+        self.filters = out_chan
+        self.demod = demod
+        self.kernel = kernel
+        self.stride = stride
+        self.dilation = dilation
+        self.weight = nn.Parameter(torch.randn((out_chan, in_chan, kernel, kernel)))
+        self.eps = eps
+        nn.init.kaiming_normal_(self.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+
+    def _get_same_padding(self, size, kernel, dilation, stride):
+        return ((size - 1) * (stride - 1) + dilation * (kernel - 1)) // 2
+
+    def forward(self, x, y):
+        b, c, h, w = x.shape
+
+        w1 = y[:, None, :, None, None]
+        w2 = self.weight[None, :, :, :, :]
+        weights = w2 * (w1 + 1)
+
+        if self.demod:
+            d = torch.rsqrt((weights ** 2).sum(dim=(2, 3, 4), keepdim=True) + self.eps)
+            weights = weights * d
+
+        x = x.reshape(1, -1, h, w)
+
+        _, _, *ws = weights.shape
+        weights = weights.reshape(b * self.filters, *ws)
+
+        padding = self._get_same_padding(h, self.kernel, self.dilation, self.stride)
+        x = F.conv2d(x, weights, padding=padding, groups=b)
+
+        x = x.reshape(-1, self.filters, h, w)
+        return x
 
 
 class Up(nn.Module):
     """ Upscaling then conv """
 
-    def __init__(self, in_channels, out_channels, activation='relu',  resnet=True):
+    def __init__(self, in_channels, out_channels, activation='relu', resnet=True):
         super().__init__()
-
         self.up_layer = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
         self.up       = Conv(in_channels, out_channels, activation=activation, resnet=resnet)
 
@@ -214,8 +184,6 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    """ Up Stream Sequence """
-
     def __init__(self,
                  out_channels=3,
                  mid_act='relu',
@@ -227,6 +195,7 @@ class Decoder(nn.Module):
         input_channel = 512
         fea_dim       = 100
 
+        self.to_style1 = nn.Linear(in_features=fea_dim, out_features=input_channel)
 
         self.up_16_16_1 = Conv(input_channel, 256, activation=mid_act, resnet=resnet)
         self.up_16_16_2 = Conv(768, 512, activation=mid_act, resnet=resnet)
@@ -242,29 +211,27 @@ class Decoder(nn.Module):
         self.up_128_128_1 = Conv(128, 64, activation=mid_act, resnet=resnet)
 
         self.up_128_256 = Up(128, 32, activation=mid_act, resnet=resnet)
-        self.out_conv   = Conv(64, out_channels, activation=out_act)
+        self.out_conv   = Conv(64, out_channels, activation=mid_act)
+
+        self.out_act = get_activation(out_act)
 
 
-    def forward(self, x, ibl):
+    def forward(self, x):
         x11, x10, x9, x8, x7, x6, x5, x4, x3, x2, x1 = x
 
-        h,w = x10.shape[2:]
-        y = ibl.view(-1, 512, 1, 1).repeat(1, 1, h, w)
+        y = self.up_16_16_1(x11)
 
-        y = self.up_16_16_1(y)  # 256 x 16 x 16
+        y = torch.cat((x10, y), dim=1)
+        y = self.up_16_16_2(y)
 
-        y = torch.cat((x10, y), dim=1)  # 768 x 16 x 16
-        y = self.up_16_16_2(y)  # 512 x 16 x 16
+        y = torch.cat((x9, y), dim=1)
+        y = self.up_16_16_3(y)
 
-
-        y = torch.cat((x9, y), dim=1)  # 1024 x 16 x 16
-        y = self.up_16_16_3(y)  # 512 x 16 x 16
-
-        y = torch.cat((x8, y), dim=1)  # 1024 x 16 x 16
-        y = self.up_16_32(y)  # 256 x 32 x 32
+        y = torch.cat((x8, y), dim=1)
+        y = self.up_16_32(y)
 
         y = torch.cat((x7, y), dim=1)
-        y = self.up_32_32_1(y)  # 256 x 32 x 32
+        y = self.up_32_32_1(y)
 
         y = torch.cat((x6, y), dim=1)
         y = self.up_32_64(y)
@@ -283,11 +250,12 @@ class Decoder(nn.Module):
 
         y = torch.cat((x1, y), dim=1)
         y = self.out_conv(y)  # 3 x 256 x 256
+        y = self.out_act(y)
 
         return y
 
 
-class SSN_Model(nn.Module):
+class SSN_v1(nn.Module):
     """ Implementation of Relighting Net """
 
     def __init__(self,
@@ -296,38 +264,27 @@ class SSN_Model(nn.Module):
                  mid_act='leaky',
                  out_act='sigmoid',
                  resnet=True):
-        super(SSN_Model, self).__init__()
-
-        self.out_act = out_act
-
+        super(SSN_v1, self).__init__()
         self.encoder = Encoder(in_channels, mid_act=mid_act, resnet=resnet)
         self.decoder = Decoder(out_channels, mid_act=mid_act, out_act=out_act, resnet=resnet)
 
-        # init weights 
-        init_func = weights_init('gaussian', std=1e-3)
-        self.encoder.apply(init_func)
-        self.decoder.apply(init_func)
 
-
-    def forward(self, x, ibl):
+    def forward(self, x, softness):
         """
             Input is (source image, target light, source light, )
             Output is: predicted new image, predicted source light, self-supervision image
         """
         latent  = self.encoder(x)
-        pred    = self.decoder(latent, ibl)
-
-        if self.out_act == 'sigmoid':
-            pred = pred * 30.0
+        pred    = self.decoder(latent)
 
         return pred
 
 
 if __name__ == '__main__':
-    x = torch.randn(5,1,256,256)
-    ibl = torch.randn(5, 1, 32, 16)
-    model = SSN_Model(1,1)
+    test_input = torch.randn(5, 1, 256, 256)
+    style = torch.randn(5, 100)
 
-    y = model(x, ibl)
+    model = SSN_v1(1, 1, mid_act='gelu', out_act='gelu', resnet=True)
+    test_out = model(test_input, style)
 
-    print('Output: ', y.shape)
+    print('Ouptut shape: ', test_out.shape)

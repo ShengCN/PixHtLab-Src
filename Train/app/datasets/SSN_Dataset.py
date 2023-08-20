@@ -62,8 +62,6 @@ class SSN_Dataset(Dataset):
 
         self.keys = self.train_keys if self.is_training else self.valid_keys
 
-        self.data_ = {}
-
 
     def __len__(self):
         return len(self.keys) * self.shadow_per_epoch
@@ -73,9 +71,6 @@ class SSN_Dataset(Dataset):
         """ Note, return format is fixed:
         """
         idx = idx % len(self.keys)
-
-        if idx in self.data_.keys():
-            return self.data_[idx]
 
         key = self.keys[idx]
 
@@ -92,11 +87,6 @@ class SSN_Dataset(Dataset):
         mask   = torch.Tensor(mask[None, ...])
         ibl    = torch.Tensor(ibl[None, ...])
         shadow = torch.Tensor(shadow[None, ...])
-
-        self.data_[idx] = {
-            'x': {'mask': mask, 'ibl': ibl},
-            'y': shadow,
-        }
 
         return {
             'x': {'mask': mask, 'ibl': ibl},

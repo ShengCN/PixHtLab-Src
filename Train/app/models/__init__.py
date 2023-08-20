@@ -1,7 +1,8 @@
 # SRC: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/models/__init__.py
 import logging
 import importlib
-from models.abs_model import abs_model
+
+from .abs_model import abs_model
 
 
 def find_model_using_name(model_name):

@@ -54,6 +54,8 @@ class SSN(abs_model):
         pred = self.forward(input_x)
         loss = self.compute_loss(y, pred)
 
+        # logging.info('Pred/Target: {}, {}/{}, {}'.format(pred.min().item(), pred.max().item(), y.min().item(), y.max().item()))
+
         if is_training:
             loss.backward()
             optimizer.step()
@@ -89,7 +91,25 @@ class SSN(abs_model):
 
 
     def inference(self, x):
-        pass
+        keys = ['mask', 'ibl']
+        for k in keys:
+            assert k in x.keys(), '{} not in input'.format(k)
+            assert len(x[k].shape) == 2, '{} should be 2D tensor'.format(k)
+
+        import pdb; pdb.set_trace()
+
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+        mask = torch.tensor(x['mask'])[None, None, ...].to(device)
+        ibl  = torch.tensor(x['ibl'])[None, None, ...].to(device)
+
+        input_x = {'mask': mask, 'ibl': ibl}
+        pred    = self.forward(input_x)
+
+        pred = pred[0, 0].cpu().numpy() / 30.0
+        return pred
+
+
 
     def batch_inference(self, x):
         # TODO
@@ -116,7 +136,6 @@ class SSN(abs_model):
 
     def set_optimizers(self, optimizer: dict):
         self.optimizer = optimizer['optimizer']
-
 
     ####################
     # Personal Methods #

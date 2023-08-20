@@ -1,7 +1,6 @@
 # SRC: https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/models/__init__.py
 import logging
 import importlib
-from models.abs_model import abs_model
 from torch.utils.data import DataLoader
 
 
