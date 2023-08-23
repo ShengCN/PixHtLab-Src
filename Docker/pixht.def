@@ -1,5 +1,5 @@
 bootstrap: docker 
-From: yichensheng/pixht:0.1
+From: yichensheng/pixht
 
 Stage: build
 
@@ -10,12 +10,5 @@ Stage: build
     echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
     echo "export SHELL=/bin/bash" >> $SINGULARITY_ENVIRONMENT
 
-    echo ". /opt/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
-
 %environment
     export SHELL=/bin/bash
-    export PATH="/opt/miniconda/bin:$PATH"
-
-    echo ". /opt/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
-	. /opt/miniconda3/etc/profile.d/conda.sh
-    source ~/.bashrc && conda activate pixht 
