@@ -1,0 +1,14 @@
+bootstrap: docker 
+From: yichensheng/pixht
+
+Stage: build
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    # apt-get update && apt-get install -y netcat && apt-get install -y ffmpeg 
+    NOW=`date`
+    echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+    echo "export SHELL=/bin/bash" >> $SINGULARITY_ENVIRONMENT
+
+%environment
+    export SHELL=/bin/bash
