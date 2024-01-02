@@ -14,22 +14,28 @@ model:
   weight_decay: 4e-5
   beta1: 0.9
 
+
 # dataset
 dataset:
   name: 'SSN_Dataset'
-  hdf5_file: 'Dataset/SSN/ssn_dataset.hdf5'
-  shadow_per_epoch: 100
+  hdf5_file: 'Dataset/SSN/ssn_shadow/shadow_base/ssn_base.hdf5'
+  shadow_per_epoch: 10
+
+
+# test_dataset:
+#   name: 'SSN_Dataset'
+#   hdf5_file: 'Dataset/SSN/ssn_shadow/shadow_base/ssn_base.hdf5'
 
 
 # training related
 hyper_params:
-  lr: 5e-4
+  lr: 1e-3
   epochs: 100000
   workers: 40
-  batch_size: 500
-  save_epoch: 500
+  batch_size: 10
+  save_epoch: 10
 
-  eval_batch: 100 
+  eval_batch: 10
   eval_save: False
 
   # visualization
@@ -41,5 +47,5 @@ hyper_params:
     - 1
 
   default_folder: 'weights'
-  resume: True 
+  resume: False
   weight_file: 'latest'

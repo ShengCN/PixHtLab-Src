@@ -187,6 +187,7 @@ class Trainer:
 
         epochs     = hyper_params['epochs']
         save_epoch = hyper_params['save_epoch']
+        eval_batch = hyper_params['eval_batch']
         desc       = 'Exp. {}'.format(exp_name)
 
         pbar = tqdm(range(start_epoch, epochs), desc=desc)
@@ -205,19 +206,17 @@ class Trainer:
                 # plotting epoch loss together
                 self.exp_logger.plot_losses({'train': train_epoch_loss, 'eval': eval_epoch_loss, 'test': test_epoch_loss}, 'All')
             else:
-
                 # plotting epoch loss
                 desc = 'Exp. {}, Epoch: {}, Train loss: {}, Eval loss: {}'.format(exp_name,
-                                                                                  epoch,
-                                                                                  train_epoch_loss,
-                                                                                  eval_epoch_loss)
-                # plotting epoch loss together
+                                                                                epoch,
+                                                                                train_epoch_loss,
+                                                                                eval_epoch_loss)
+
                 self.exp_logger.plot_losses({'train': train_epoch_loss, 'eval': eval_epoch_loss}, 'All')
 
             # save model
             if epoch % save_epoch == 0:
                 self.save(epoch)
-
 
             pbar.set_description(desc)
             self.cur_epoch = epoch + 1

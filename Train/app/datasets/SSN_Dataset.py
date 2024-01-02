@@ -16,6 +16,7 @@ import logging
 from time import time
 import cv2
 import h5py
+import pickle
 
 import numbergen as ng
 import imagen as ig
@@ -30,7 +31,6 @@ class SSN_Dataset(Dataset):
 
         random.seed(19920208)
         np.random.seed(19920208)
-
 
         self.is_training = is_training
         self.transform = transforms.Compose([ transforms.ToTensor() ])
@@ -55,12 +55,29 @@ class SSN_Dataset(Dataset):
 
         # import pdb; pdb.set_trace()
         random.shuffle(self.meta)
-        # self.train_keys = self.meta[:int(len(self.meta)*0.8)]
-        # self.valid_keys = self.meta[int(len(self.meta)*0.8):]
-
-        self.train_keys = self.valid_keys = self.meta
+        percentage = 0.9
+        self.train_keys = self.meta[:int(len(self.meta)*percentage)]
+        self.valid_keys = self.meta[int(len(self.meta)*percentage):]
+        # self.train_keys = self.valid_keys = self.meta
 
         self.keys = self.train_keys if self.is_training else self.valid_keys
+        print('Train/Valid: {}/{}'.format(len(self.train_keys), len(self.valid_keys)))
+
+        self.mask_buffer = {}
+        self.shadow_buffer = {}
+
+        dataset_root = os.path.dirname(hdf5_file)
+        cache_file = join(dataset_root, 'cache/{}.pkl'.format(os.path.basename(hdf5_file))) 
+        os.makedirs(os.path.dirname(cache_file), exist_ok=True)
+
+        if not os.path.exists(cache_file):
+            for k in tqdm(self.keys, desc='Loading data'):
+                self.mask_buffer[k] = self.mask_ds[k][...]
+                self.shadow_buffer[k] = self.base_ds[k][...]
+            
+            pickle.dump([self.mask_buffer, self.shadow_buffer], open(cache_file, 'wb'))
+        else:
+            self.mask_buffer, self.shadow_buffer = pickle.load(open(cache_file, 'rb'))
 
 
     def __len__(self):
@@ -77,8 +94,11 @@ class SSN_Dataset(Dataset):
         assert key in self.mask_ds.keys(), 'key {} does not exist in mask_ds'.format(key)
         assert key in self.base_ds.keys(), 'key {} does not exist in base_ds'.format(key)
 
-        mask = self.mask_ds[key][...]
-        base = self.base_ds[key][...]
+        # mask = self.mask_ds[key][...]
+        # base = self.base_ds[key][...]
+
+        mask = self.mask_buffer[key]
+        base = self.shadow_buffer[key]
 
         # render the shadow
         shadow, ibl = self.render_new_shadow(base)
