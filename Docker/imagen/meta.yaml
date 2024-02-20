@@ -1,0 +1,27 @@
+package:
+  name: imagen
+  version: 2.1
+
+source:
+  path: .
+
+requirements:
+  build:
+    - python
+    - setuptools
+  run:
+    - python
+    - param
+    - numpy
+    - pillow
+    - holoviews
+
+test:
+  imports:
+    - imagen
+
+about:
+  home: http://ioam.github.io/imagen/
+  summary: Generic Python library for 0D, 1D, and 2D pattern distributions
+  license: BSD
+
