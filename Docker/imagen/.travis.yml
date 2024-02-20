@@ -1,0 +1,25 @@
+dist: xenial
+sudo: true
+language: python
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+
+notifications:
+  email:
+    on_failure: change # [always|never|change] default: always
+
+install:
+  - pip install param
+  - pip install holoviews
+  - pip install jinja2 tornado pyzmq matplotlib pillow
+  - if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install ipython==5 ipykernel; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3* ]]; then pip install ipython ipykernel; fi
+
+before-script:
+  - "echo 'backend : Agg' > $HOME/.matplotlib/matplotlibrc"
+
+script:
+  - nosetests --with-doctest
