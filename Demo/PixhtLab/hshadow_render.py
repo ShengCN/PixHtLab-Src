@@ -1,7 +1,7 @@
 import time
 import torch
 import hshadow
-import plane_visualize
+# import plane_visualize
 import numpy as np
 from torchvision import transforms
 from scipy.ndimage import uniform_filter
@@ -256,13 +256,13 @@ def hshadow_composite(rgb, mask, hmap, rechmap, light_pos, mouse_pos, softness, 
         mask_ = np.repeat(mask, 3, axis=2)
         return (1.0-mask_) * shadow * rgb + mask_ * rgb, shadow.copy(), dbgs
 
-def vis_horizon(fov, horizon, h, w):
-        # fov, horizon = 120, 400
-        camera = torch.tensor([[fov, horizon]])
-        planes = torch.tensor([[0.0, 0.0, 0.0, 0.0, 1.0, 0.0]])
+# def vis_horizon(fov, horizon, h, w):
+#         # fov, horizon = 120, 400
+#         camera = torch.tensor([[fov, horizon]])
+#         planes = torch.tensor([[0.0, 0.0, 0.0, 0.0, 1.0, 0.0]])
 
-        camera = camera.float().to(device)
-        planes = planes.float().to(device)
+#         camera = camera.float().to(device)
+#         planes = planes.float().to(device)
 
-        ground_vis = plane_visualize.forward(planes, camera, h, w)[0]
-        return 1.0-ground_vis[0].detach().cpu().numpy().transpose(1,2,0)
+#         ground_vis = plane_visualize.forward(planes, camera, h, w)[0]
+#         return 1.0-ground_vis[0].detach().cpu().numpy().transpose(1,2,0)

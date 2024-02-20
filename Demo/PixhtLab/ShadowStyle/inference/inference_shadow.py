@@ -20,7 +20,6 @@ import math
 
 import cv2
 import random
-from .ssn.random_pattern import random_pattern
 from .ssn.ssn import Relight_SSN
 device = torch.device('cuda:0')
 
