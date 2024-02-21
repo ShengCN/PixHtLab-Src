@@ -1,5 +1,5 @@
 # PixHtLab 
-This is the source code([[**Paper**](https://arxiv.org/pdf/2303.00137.pdf)]  [[**SSN Demo**](#ssn-demo)] [[**SSN Training**](#ssn-training)] [[**PixHtLab Demo**](#pixhtlab-demo)] [[**SSSG & PixHtLab Training**](#pixhtlab-training)]) repository for three papers:  
+This is the source code([[**Paper**](https://arxiv.org/pdf/2303.00137.pdf)]  [[**SSN Demo**](#ssn-demo)] [[**SSN Training**](#ssn-training)] [[**PixHtLab Demo**](#pixhtlab-demo)] [[**SSG & PixHtLab Training**](#pixhtlab-training)]) repository for three papers:  
 
 
 * [(CVPR 2023 highlight) PixHt-Lab: Pixel Height Based Light Effect Generation for Image Compositing](https://arxiv.org/pdf/2303.00137.pdf)
