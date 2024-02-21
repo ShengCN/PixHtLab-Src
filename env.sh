@@ -3,11 +3,11 @@
 
 conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.3 -c pytorch -y
 
-cd Docker/imagen && pip install . && cd - 
-echo "Imagen Installed"
+cd Docker/imagen && pip install . && cd - && echo "Imagen Installed"
 
-cd Demo/Torch_Render && pip install . && cd -
-echo "Torch Render Installed"
+
+cd Demo/PixhtLab/Torch_Render && pip install . && cd - && echo "Torch Render Installed"
+
 
 pip install matplotlib pandas scipy dominate tensorboard opencv-python h5py jupyterlab PyQt5
 pip install holoviews==1.17.0
