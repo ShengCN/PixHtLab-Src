@@ -77,7 +77,7 @@ wget https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzu
 
 ## PixHtLab-Demo 
 For PixHtLab, we do not have Gradio demo as the computation relies on CUDA layer operation. The free Gradio demo on huggingface only provides CPU calculations. 
-Instead, I put a jupyter notebook in the ``Demo/PixhtLab``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
+Instead, I put a jupyter notebook in the ``Demo/PixhtLab/Demo.ipynb``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
 
 
 ## PixHtLab-Training 
