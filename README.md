@@ -45,15 +45,64 @@ The training codes are under `Train` folder. To reproduce the training process, 
 cd Train 
 
 # before running, try to check the setting in SSN.yaml.
+# The YAML file assumes the dataset file path is: Train/Dataset/SSN/ssn_dataset.hdf5
 python app/Trainer.py --config configs/SSN.yaml
+```
+
+# SSG & PixHtLab
+We find shadow can be rendered using pixel height maps. We further explored rendering in pixel height representation and found not only shadow can be rendered, 3D light effects (shadow, reflection, refractions, etc) can be rendered as well. So SSG can be viewed as a subset of PixHtLab. For simplicity, this repo directly release the code for PixHtLab. 
+
+## Environment Setup
+First, create a conda environment with python 3.9. 
+
+```bash
+conda create -n pixht python=3.9  -y
+conda activate pixht
+```
+
+Then run the ``env.sh`` script. I noticed that the environment to setup the training framework is becoming to be a little tricky due to some python package updates. So I will build a Docker for the ease of use. 
+
+```bash
+bash env.sh
+```
+
+
+## Dataset 
+As the file is large (173G), the dataset file is put in Dropbox. Use this [link](https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzubhj41m6j1muj393j33iuzm&dl=0) to download. The advantage of Dropbox link is that you can use wget to download. 
+
+```bash
+# remember to cd to where you want to save the dataset file. 
+wget https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzubhj41m6j1muj393j33iuzm&dl=0
+```
+
+
+## Demo 
+For PixHtLab, we do not have Gradio demo as the computation relies on CUDA layer operation. The free Gradio demo on huggingface only provides CPU calculations. 
+Instead, I put a jupyter notebook in the ``Demo/PixhtLab``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
+
+
+## Training 
+The training codes are under `Train` folder. To reproduce the training process, first prepare the dataset discussed above. The dataset for SSG and SSN++ (sometimes I call it GSSN) is the same hdf5 file. Then run the following command: 
+
+``` bash 
+cd Train 
+
+# Before running, try to check the setting in SSG.yaml.
+# The YAML file assumes the dataset file path is: Train/Dataset/SSG/dataset.hdf5
+python app/Trainer.py --config configs/SSG.yaml
+
+# or if you want to train SSN++ with 3D-aware buffer channels, try this:
+# The YAML file assumes the dataset file path is: Train/Dataset/SSG/dataset.hdf5
+python app/Trainer.py --config configs/GSSN.yaml
 ```
 
 
 # Updates
 - [x] [2023-03-16] Basic setup. 
-- [x] SSN dataset/demo/inference/training 
-- [ ] Python environment setup + a docker image 
-- [ ] SSG/PixhtLab dataset/demo/inference/training 
+- [x] [2024-01-02] SSN dataset/demo/inference/training 
+- [x] [2024-02-20] (Sry, I was busy at that time.) SSG/PixhtLab dataset/demo/inference/training 
+- [x] [2024-02-20] Python environment setup 
+- [ ] Build a docker image 
 
 # License
 This code repo can only be used for non-commercial use only. 
