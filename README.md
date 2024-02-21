@@ -1,5 +1,5 @@
 # PixHtLab 
-This is the source code([[**Paper**](https://arxiv.org/pdf/2303.00137.pdf)]  [[**Demo**](#inference)]  [[**Training**](#training)]) repository for three papers:  
+This is the source code([[**Paper**](https://arxiv.org/pdf/2303.00137.pdf)]  [[**SSN Demo**](#ssn-demo)] [[**SSN Training**](#ssn-training)] [[**PixHtLab Demo**](#pixhtlab-demo)] [[**SSSG & PixHtLab Training**](#pixhtlab-training)]) repository for three papers:  
 
 
 * [(CVPR 2023 highlight) PixHt-Lab: Pixel Height Based Light Effect Generation for Image Compositing](https://arxiv.org/pdf/2303.00137.pdf)
@@ -31,14 +31,14 @@ We provide a precomputed dataset composed of 558 different 3D models, which can 
 See the [**ssn_dataset.hdf5**](https://huggingface.co/datasets/ysheng/SSN-SSG-PixHtLab/resolve/main/SSN/Dataset) file.
 
 
-## Demo 
+## SSN-Demo 
 A gradio-based GUI demo is provided in the `Demo/SSN` folder. First, download the [weight](https://huggingface.co/datasets/ysheng/SSN-SSG-PixHtLab/tree/main/SSN/weights) it used.
 Then run the following code to see the demo: 
 ``` bash
 python app.py
 ```
 
-## Training 
+## SSN-Training 
 The training codes are under `Train` folder. To reproduce the training process, first prepare the dataset discussed above, then run the following command: 
 
 ``` bash 
@@ -63,9 +63,7 @@ conda activate pixht
 Then run the ``env.sh`` script. I noticed that the environment to setup the training framework is becoming to be a little tricky due to some python package updates. So I will build a Docker for the ease of use. 
 
 ```bash
-bash env.sh
-```
-
+bash env.sh ```
 
 ## Dataset 
 As the file is large (173G), the dataset file is put in Dropbox. Use this [link](https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzubhj41m6j1muj393j33iuzm&dl=0) to download. The advantage of Dropbox link is that you can use wget to download. 
@@ -76,12 +74,12 @@ wget https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzu
 ```
 
 
-## Demo 
+## PixHtLab-Demo 
 For PixHtLab, we do not have Gradio demo as the computation relies on CUDA layer operation. The free Gradio demo on huggingface only provides CPU calculations. 
 Instead, I put a jupyter notebook in the ``Demo/PixhtLab``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
 
 
-## Training 
+## PixHtLab-Training 
 The training codes are under `Train` folder. To reproduce the training process, first prepare the dataset discussed above. The dataset for SSG and SSN++ (sometimes I call it GSSN) is the same hdf5 file. Then run the following command: 
 
 ``` bash 
