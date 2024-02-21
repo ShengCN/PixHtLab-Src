@@ -63,7 +63,8 @@ conda activate pixht
 Then run the ``env.sh`` script. I noticed that the environment to setup the training framework is becoming to be a little tricky due to some python package updates. So I will build a Docker for the ease of use. 
 
 ```bash
-bash env.sh ```
+bash env.sh 
+```
 
 ## Dataset 
 As the file is large (173G), the dataset file is put in Dropbox. Use this [link](https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzubhj41m6j1muj393j33iuzm&dl=0) to download. The advantage of Dropbox link is that you can use wget to download. 
