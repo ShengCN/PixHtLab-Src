@@ -71,13 +71,26 @@ As the file is large (173G), the dataset file is put in Dropbox. Use this [link]
 
 ```bash
 # remember to cd to where you want to save the dataset file. 
-wget https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzubhj41m6j1muj393j33iuzm&dl=0
+wget -O dataset.hdf5 https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/dataset.hdf5?rlkey=pzubhj41m6j1muj393j33iuzm&dl=0
 ```
 
 
 ## PixHtLab-Demo 
 For PixHtLab, we do not have Gradio demo as the computation relies on CUDA layer operation. The free Gradio demo on huggingface only provides CPU calculations. 
 Instead, I put a jupyter notebook in the ``Demo/PixhtLab/Demo.ipynb``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
+
+### Environment 
+Soft shadow rendering needs pre-trained SSN. The weight can be downloaded from [here](https://www.dropbox.com/scl/fi/7vzb0hlff0wbbb6l6qiyb/human_baseline_all_21-July-04-52-AM.pt?rlkey=lw34u1qao6had58t9vqy3bfbj&dl=0). Create a weight folder (weights) under ``Demo/PixhtLab/`` and put the weight there. Or use the following command to do this: 
+
+```Bash
+mkdir Demo/PixhtLab/weights
+cd Demo/PixhtLab/weights
+
+# wget to download 
+wget -O human_baseline_all_21-July-04-52-AM.pt https://www.dropbox.com/scl/fi/7vzb0hlff0wbbb6l6qiyb/human_baseline_all_21-July-04-52-AM.pt\?rlkey\=lw34u1qao6had58t9vqy3bfbj\&dl\=0
+```
+
+
 
 
 ## PixHtLab-Training 
