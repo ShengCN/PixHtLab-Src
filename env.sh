@@ -8,7 +8,7 @@ cd Docker/imagen && pip install . && cd - && echo "Imagen Installed"
 cd Demo/PixhtLab/Torch_Render && pip install . && cd - && echo "Torch Render Installed"
 
 
-pip install matplotlib pandas scipy dominate tensorboard opencv-python h5py jupyterlab PyQt5
+pip install matplotlib pandas scipy dominate tensorboard opencv-python h5py jupyterlab PyQt5 gradio==3.45.0
 conda install conda-forge::meshplot -y
 
 pip install holoviews==1.17.0

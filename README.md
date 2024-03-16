@@ -79,7 +79,7 @@ wget -O dataset.hdf5 https://www.dropbox.com/scl/fi/ux7wr5uz2rne6vu70eq2f/datase
 For PixHtLab, we do not have Gradio demo as the computation relies on CUDA layer operation. The free Gradio demo on huggingface only provides CPU calculations. 
 Instead, I put a jupyter notebook in the ``Demo/PixhtLab/Demo.ipynb``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
 
-### Environment 
+### Weight File 
 Soft shadow rendering needs pre-trained SSN. The weight can be downloaded from [here](https://www.dropbox.com/scl/fi/7vzb0hlff0wbbb6l6qiyb/human_baseline_all_21-July-04-52-AM.pt?rlkey=lw34u1qao6had58t9vqy3bfbj&dl=0). Create a weight folder (weights) under ``Demo/PixhtLab/`` and put the weight there. Or use the following command to do this: 
 
 ```Bash
@@ -90,7 +90,7 @@ cd Demo/PixhtLab/weights
 wget -O human_baseline_all_21-July-04-52-AM.pt https://www.dropbox.com/scl/fi/7vzb0hlff0wbbb6l6qiyb/human_baseline_all_21-July-04-52-AM.pt\?rlkey\=lw34u1qao6had58t9vqy3bfbj\&dl\=0
 ```
 
-
+This demo weight is a little old. But it should be enough for most cases for demonstration. If you want better weight, you can try to replace this weight with the latest SSN [weight](https://huggingface.co/datasets/ysheng/SSN-SSG-PixHtLab/resolve/main/SSN/weights/0000001000.pt?download=true) discussed above. I have not tested if directly replacing the weight is OK. If it is not OK, try to replace the inference module using the above SSN inference module.
 
 
 ## PixHtLab-Training 
