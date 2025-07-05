@@ -80,7 +80,7 @@ For PixHtLab, we do not have Gradio demo as the computation relies on CUDA layer
 Instead, I put a jupyter notebook in the ``Demo/PixhtLab/Demo.ipynb``. It provides an example to show how to use PixHtLab to render shadow and reflections. 
 
 ### Weight File 
-Soft shadow rendering needs pre-trained SSN. The weight can be downloaded from [here](https://www.dropbox.com/scl/fi/7vzb0hlff0wbbb6l6qiyb/human_baseline_all_21-July-04-52-AM.pt?rlkey=lw34u1qao6had58t9vqy3bfbj&dl=0). Create a weight folder (weights) under ``Demo/PixhtLab/`` and put the weight there. Or use the following command to do this: 
+Soft shadow rendering needs pre-trained SSN. The weight can be downloaded from [here](https://www.dropbox.com/scl/fi/x1zmz5w4l0lyklqkjabq3/human_baseline_all_21-July-04-52-AM.pt?rlkey=4kbm1d7lah6d83ecftd2gch59&st=wqqgodx8&dl=0). Create a weight folder (weights) under ``Demo/PixhtLab/`` and put the weight there. Or use the following command to do this: 
 
 ```Bash
 mkdir Demo/PixhtLab/weights
